@@ -15,16 +15,16 @@ int exitShell(CommandInfo *info)
 
 	if (info->argv[1])
 	{
-		exitStatus = printErrorString(info->argv[1]);
+		exitStatus = strError(info->argv[1]);
 		if (exitStatus == -1)
 		{
 			info->status = 2;
-			printErrorInfo(info, "Invalid number: ");
-			_puts(info->argv[1]);
-			_putchar('\n');
+			printError(info, "Invalid number: ");
+			ePuts(info->argv[1]);
+			ePutchar('\n');
 			return (1);
 		}
-		info->err_num = printErrorString(info->argv[1]);
+		info->err_num = strError(info->argv[1]);
 		return (-2);
 	}
 	info->err_num = -1;
@@ -39,47 +39,52 @@ int exitShell(CommandInfo *info)
  *
  * Return: Always 0.
  */
+
 int changeDir(CommandInfo *info)
 {
 	char *current_dir, *target_dir, buffer[1024];
 	int res_dir;
 
 	current_dir = getcwd(buffer, 1024);
-
 	if (!current_dir)
-	{
 		_puts("Error: Unable to retrieve current directory.\n");
+
+	if (!info->argv[1])
+	{
+		target_dir = getEnvVar(info, "HOME=");
+		if (!target_dir)
+			res_dir = chdir((target_dir = getEnvVar(info, "PWD=")) ? target_dir : "/");
+		else
+			res_dir = chdir(target_dir);
+	}
+	else if (_strcmp(info->argv[1], "-") == 0)
+	{
+		if (!getEnvVar(info, "OLDPWD="))
+		{
+			_puts(current_dir);
+			_putchar('\n');
+			return (1);
+		}
+		_puts(getEnvVar(info, "OLDPWD=")), _putchar('\n');
+		res_dir = chdir((target_dir = getEnvVar(info, "OLDPWD="))
+				? target_dir : "/");
+	}
+	else
+		res_dir = chdir(info->argv[1]);
+
+	if (res_dir == -1)
+	{
+		printError(info, "Failed to change directory. ");
+		ePuts(info->argv[1]), ePutchar('\n');
 	}
 	else
 	{
-		target_dir = (!info->argv[1])                     ? getenv("HOME")
-			: (_strcmp(info->argv[1], "-") == 0) ? getenv("OLDPWD")
-			: info->argv[1];
-		res_dir = chdir(target_dir);
-
-		if (res_dir == -1)
-		{
-			printErrorInfo(info, "Failed to change directory. ");
-			_puts(target_dir);
-			_putchar('\n');
-		}
-		else
-		{
-			if (_strcmp(info->argv[1], "-") != 0)
-			{
-				setenv("OLDPWD", getenv("PWD"), 1);
-			}
-			setenv("PWD", getcwd(buffer, 1024), 1);
-
-			if (_strcmp(info->argv[1], "-") == 0)
-			{
-				_puts(getenv("OLDPWD"));
-				_putchar('\n');
-			}
-		}
+		setEnv(info, "OLDPWD", current_dir);
+		setEnv(info, "PWD", getcwd(buffer, 1024));
 	}
 	return (0);
 }
+
 
 /**
  * myHelp - Display help information for shell commands

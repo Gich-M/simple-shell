@@ -140,8 +140,8 @@ void forkCmd(CommandInfo *info)
 			freeInfo(info, 1);
 			if (errno == EACCES)
 			{
-				fprintf(stderr, "Error: Permission denied.\
-						Unable to execute '%s'\n", info->path);
+				fprintf(stderr, "Error: Permission denied.Unable to execute '%s'\n",
+						info->path);
 				exit(126);
 			}
 			exit(1);

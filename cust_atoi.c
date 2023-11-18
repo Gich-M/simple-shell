@@ -64,21 +64,15 @@ int _atoi(char *s)
 		else if (s[i] >= '0' && s[i] <= '9')
 		{
 			status = 1;
-			result = result * 10 + (s[i] - '0');
-			if (result * sign > (unsigned int)INT_MAX ||
-					result * sign < (unsigned int)INT_MIN)
-			{
-				fprintf(stderr, "Overflow error\n");
-				return (0);
-			}
+			result *= 10;
+			result += (s[i] - '0');
 		}
 		else if (status == 1)
-		{
 			status = 2;
-		}
 	}
-	output = (sign == -1) ? -result : result;
+	if (sign == -1)
+		output = -result;
+	else
+		output = result;
 	return (output);
 }
-
-
