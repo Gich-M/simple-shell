@@ -3,53 +3,50 @@
 /**
  * **strtow - splits a string into words
  * @str: string to split
- * @delim: delimeter string
- *
+ * @delim: the delimeter string
  * Return: pointer to an array of strings (Success)
  * or NULL (Error)
  */
 
 char **strtow(char *str, char *delim)
 {
-	int i, j, k, m, numWords = 0, inWord = 0;
-	char **wordsArray;
+	int i, j, k, m, numwords = 0;
+	char **s;
 
-	if (!str || !str[0])
+	if (str == NULL || str[0] == 0)
 		return (NULL);
-	delim = delim ? delim : " ";
-	for (i = 0; str[i]; i++)
+	if (!delim)
+		delim = " ";
+	for (i = 0; str[i] != '\0'; i++)
+		if (!isDelim(str[i], delim) && (isDelim(str[i + 1], delim) || !str[i + 1]))
+			numwords++;
+
+	if (numwords == 0)
+		return (NULL);
+	s = malloc((1 + numwords) * sizeof(char *));
+	if (!s)
+		return (NULL);
+	for (i = 0, j = 0; j < numwords; j++)
 	{
-		if (str[i] == ' ' || strchr(delim, str[i]))
-			inWord = 0;
-		else if (!inWord)
-			inWord = 1, numWords++;
-	}
-	if (!numWords)
-		return (NULL);
-	wordsArray = malloc((1 + numWords) * sizeof(char *));
-	if (!wordsArray)
-		return (NULL);
-	for (i = 0, j = 0; j < numWords; j++)
-	{
-		while (str[i] == ' ' || strchr(delim, str[i]))
+		while (isDelim(str[i], delim))
 			i++;
 		k = 0;
-		while (str[i + k] != ' ' && str[i + k] && !strchr(delim, str[i + k]))
+		while (!isDelim(str[i + k], delim) && str[i + k])
 			k++;
-		wordsArray[j] = malloc((k + 1) * sizeof(char));
-		if (!wordsArray[j])
+		s[j] = malloc((k + 1) * sizeof(char));
+		if (!s[j])
 		{
 			for (k = 0; k < j; k++)
-				free(wordsArray[k]);
-			free(wordsArray);
+				free(s[k]);
+			free(s);
 			return (NULL);
 		}
 		for (m = 0; m < k; m++)
-			wordsArray[j][m] = str[i++];
-		wordsArray[j][m] = '\0';
+			s[j][m] = str[i++];
+		s[j][m] = 0;
 	}
-	wordsArray[j] = NULL;
-	return (wordsArray);
+	s[j] = NULL;
+	return (s);
 }
 
 /**
@@ -61,42 +58,39 @@ char **strtow(char *str, char *delim)
 
 char **strtow2(char *str, char delim)
 {
-	int i, j, k, m, numWords = 0;
-	char **wordsArray;
+	int i, j, k, m, numwords = 0;
+	char **s;
 
-	if (!str || !str[0])
+	if (str == NULL || str[0] == 0)
 		return (NULL);
-	for (i = 0; str[i]; i++)
-	{
+	for (i = 0; str[i] != '\0'; i++)
 		if ((str[i] != delim && str[i + 1] == delim) ||
-				(str[i] != delim && !str[i + 1]) || str[i + 1] == delim)
-			numWords++;
-	}
-	if (!numWords)
+		    (str[i] != delim && !str[i + 1]) || str[i + 1] == delim)
+			numwords++;
+	if (numwords == 0)
 		return (NULL);
-	wordsArray = malloc((1 + numWords) * sizeof(char *));
-	if (!wordsArray)
+	s = malloc((1 + numwords) * sizeof(char *));
+	if (!s)
 		return (NULL);
-	for (i = 0, j = 0; j < numWords; j++)
+	for (i = 0, j = 0; j < numwords; j++)
 	{
 		while (str[i] == delim && str[i] != delim)
 			i++;
 		k = 0;
 		while (str[i + k] != delim && str[i + k] && str[i + k] != delim)
 			k++;
-		wordsArray[j] = malloc((k + 1) * sizeof(char));
-		if (!wordsArray[j])
+		s[j] = malloc((k + 1) * sizeof(char));
+		if (!s[j])
 		{
 			for (k = 0; k < j; k++)
-				free(wordsArray[k]);
-			free(wordsArray);
+				free(s[k]);
+			free(s);
 			return (NULL);
 		}
 		for (m = 0; m < k; m++)
-			wordsArray[j][m] = str[i++];
-		wordsArray[j][m] = '\0';
+			s[j][m] = str[i++];
+		s[j][m] = 0;
 	}
-	wordsArray[j] = (NULL);
-	return (wordsArray);
+	s[j] = NULL;
+	return (s);
 }
-

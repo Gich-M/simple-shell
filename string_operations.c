@@ -7,7 +7,7 @@
  *
  * Return: pointer to destination
  */
-char *_strcpy(char *dest, const char *src)
+char *_strcpy(char *dest, char *src)
 {
 	int i = 0;
 
@@ -51,7 +51,7 @@ char *_strdup(const char *str)
  *
  * Return: Nothing
  */
-void _puts(const char *str)
+void _puts(char *str)
 {
 	int i = 0;
 

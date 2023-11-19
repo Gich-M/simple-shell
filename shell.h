@@ -128,21 +128,21 @@ char *findPath(CommandInfo *info, char *, char *);
 int main(int ac, char **av);
 
 /* error_handling.c */
-void printError(char *);
-int writeErrorChar(char);
-int writeCharToFD(char c, int fd);
-int printStringToFD(char *str, int fd);
+void ePuts(char *);
+int ePutchar(char);
+int putFd(char c, int fd);
+int putsFd(char *str, int fd);
 
 /* custom_string.c */
-int _strlen(const char *);
-int _strcmp(const char *, const char *);
+int _strlen(char *);
+int _strcmp(char *, char *);
 char *startsWith(const char *, const char *);
-char *_strcat(char *, const char *);
+char *_strcat(char *, char *);
 
 /* string_operations.c */
-char *_strcpy(char *, const char *);
+char *_strcpy(char *, char *);
 char *_strdup(const char *);
-void _puts(const char *);
+void _puts(char *);
 int _putchar(char);
 
 /* exits_handling.c */
@@ -168,10 +168,10 @@ int isAlpha(int);
 int _atoi(char *);
 
 /* errors_handling_1.c */
-int printErrorString(char *);
-void printErrorInfo(CommandInfo *, char *);
-int printDecimal(int, int);
-char *convertNumber(long int, int, int);
+int strError(char *);
+void printError(CommandInfo *, char *);
+int printDec(int, int);
+char *convertNum(long int, int, int);
 void removeComments(char *);
 
 /* builtin_commands.c */

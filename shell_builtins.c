@@ -38,9 +38,9 @@ int unsetAlias(CommandInfo *info, char *aliasStr)
 		return (1);
 
 	savedChar = *eqPos;
-	*eqPos = '\0';
-	result = unsetAlias(info, aliasStr);
-
+	*eqPos = 0;
+	result = deleteNodeAtIndex(&(info->alias),
+			getNodeIndex(info->alias, nodeStartsWith(info->alias, aliasStr, -1)));
 	*eqPos = savedChar;
 	return (result);
 }
@@ -104,7 +104,7 @@ int printAlias(StringList *aliasNode)
  */
 int myAlias(CommandInfo *info)
 {
-	int i;
+	int i = 0;
 	char *equalPos = NULL;
 	StringList *node = NULL;
 
@@ -127,16 +127,7 @@ int myAlias(CommandInfo *info)
 		}
 		else
 		{
-			node = nodeStartsWith(info->alias, info->argv[i], '=');
-			if (node)
-			{
-				printAlias(node);
-				{
-					_puts("No matching alias found for: ");
-					_puts(info->argv[i]);
-					_putchar('\n');
-				}
-			}
+			printAlias(nodeStartsWith(info->alias, info->argv[i], '='));
 		}
 	}
 	return (0);

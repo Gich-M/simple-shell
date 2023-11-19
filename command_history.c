@@ -51,10 +51,10 @@ int writeHistory(CommandInfo *info)
 		return (-1);
 	for (node = info->history; node; node = node->next)
 	{
-		printStringToFD(node->str, fd);
-		writeCharToFD('\n', fd);
+		putsFd(node->str, fd);
+		putFd('\n', fd);
 	}
-	writeCharToFD(FLUSH_BUFFER, fd);
+	putFd(FLUSH_BUFFER, fd);
 	close(fd);
 	return (1);
 }

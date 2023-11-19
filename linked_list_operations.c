@@ -63,7 +63,7 @@ size_t printList(const StringList *h)
 
 	while (h)
 	{
-		_puts(convertNumber(h->num, 10, 0));
+		_puts(convertNum(h->num, 10, 0));
 		_putchar(':');
 		_putchar(' ');
 		_puts(h->str ? h->str : "(nil)");

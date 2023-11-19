@@ -1,13 +1,13 @@
 #include "shell.h"
 
 /**
- * printError - Prints an error message to stderr.
+ * ePuts - Prints an error message to stderr.
  *
  * @message: The error message to be printed.
  *
  * Return: Nothing.
  */
-void printError(char *message)
+void ePuts(char *message)
 {
 	int i = 0;
 
@@ -15,20 +15,20 @@ void printError(char *message)
 		return;
 	while (message[i] != '\0')
 	{
-		writeErrorChar(message[i]);
+		ePutchar(message[i]);
 		i++;
 	}
 }
 
 /**
- * writeErrorChar - Writes a character to stderr.
+ * ePutchar - Writes a character to stderr.
  *
  * @c: The character to be printed.
  *
  * Return: On success 1.
  *         On error, -1 is returned, and errno is set appropriately.
  */
-int writeErrorChar(char c)
+int ePutchar(char c)
 {
 	static int i;
 	static char buf[WRITE_BUFFER];
@@ -44,7 +44,7 @@ int writeErrorChar(char c)
 }
 
 /**
- * writeCharToFD - Writes a character to the given file descriptor.
+ * putFd - Writes a character to the given file descriptor.
  *
  * @c: The character to be printed.
  *
@@ -53,7 +53,7 @@ int writeErrorChar(char c)
  * Return: On success 1.
  *         On error, -1 is returned, and errno is set appropriately.
  */
-int writeCharToFD(char c, int fd)
+int putFd(char c, int fd)
 {
 	static int i;
 	static char buf[WRITE_BUFFER];
@@ -69,7 +69,7 @@ int writeCharToFD(char c, int fd)
 }
 
 /**
- * printStringToFD - Prints a string to the given file descriptor.
+ * putsFd - Prints a string to the given file descriptor.
  *
  * @str: The string to be printed.
  *
@@ -77,7 +77,7 @@ int writeCharToFD(char c, int fd)
  *
  * Return: The number of characters printed.
  */
-int printStringToFD(char *str, int fd)
+int putsFd(char *str, int fd)
 {
 	int count = 0;
 
@@ -85,7 +85,7 @@ int printStringToFD(char *str, int fd)
 		return (0);
 	while (*str)
 	{
-		count += writeCharToFD(*str++, fd);
+		count += putFd(*str++, fd);
 	}
 	return (count);
 }

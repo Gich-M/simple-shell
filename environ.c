@@ -55,7 +55,7 @@ int setEnvVar(CommandInfo *info)
 {
 	if (info->argc != 3)
 	{
-		_puts("Invalid number of arguments\n");
+		ePuts("Invalid number of arguments\n");
 		return (1);
 	}
 	if (setEnv(info, info->argv[1], info->argv[2]))
@@ -83,7 +83,7 @@ int unsetEnvVar(CommandInfo *info)
 
 	if (info->argc == 1)
 	{
-		_puts("Few arguments entered.\n");
+		ePuts("Few arguments entered.\n");
 		return (1);
 	}
 	for (i = 1; i <= info->argc; i++)

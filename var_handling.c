@@ -52,16 +52,23 @@ void checkChain(CommandInfo *info, char *buf, size_t *p, size_t i, size_t len)
 {
 	size_t j = *p;
 
-	if (info->cmd_buf_type == AND_COMMAND && info->status)
+	if (info->cmd_buf_type == AND_COMMAND)
 	{
-		buf[i] = 0;
-		j = len;
+		if (info->status)
+		{
+			buf[i] = 0;
+			j = len;
+		}
 	}
-	else if (info->cmd_buf_type == OR_COMMAND && !info->status)
+	if (info->cmd_buf_type == OR_COMMAND)
 	{
-		buf[i] = 0;
-		j = len;
+		if (!info->status)
+		{
+			buf[i] = 0;
+			j = len;
+		}
 	}
+
 	*p = j;
 }
 
@@ -112,12 +119,12 @@ int replaceVars(CommandInfo *info)
 		if (!_strcmp(info->argv[i], "$?"))
 		{
 			replaceString(&(info->argv[i]),
-					_strdup(convertNumber(info->status, 10, 0)));
+					_strdup(convertNum(info->status, 10, 0)));
 			continue;
 		}
 		if (!_strcmp(info->argv[i], "$$"))
 		{
-			replaceString(&(info->argv[i]), _strdup(convertNumber(getpid(), 10, 0)));
+			replaceString(&(info->argv[i]), _strdup(convertNum(getpid(), 10, 0)));
 			continue;
 		}
 		node = nodeStartsWith(info->env, &info->argv[i][1], '=');

@@ -1,13 +1,13 @@
 #include "shell.h"
 
 /**
- * printErrorString - converts string to integer.
+ * strError - converts string to integer.
  *
  * @s: string to be converted
  *
  * Return: the converted integer if successful, or -1 on error.
  */
-int printErrorString(char *s)
+int strError(char *s)
 {
 	int i = 0;
 	unsigned long int result = 0;
@@ -31,7 +31,7 @@ int printErrorString(char *s)
 }
 
 /**
- * printErrorInfo - Prints an error message.
+ * printError - Prints an error message.
  *
  * @info: pointer to struct CommandInfo.
  *          Contains arguments.
@@ -41,19 +41,19 @@ int printErrorString(char *s)
  * Return: Always 0 if no numbers in string, converted number otherwise,
  *         -1 on error.
  */
-void printErrorInfo(CommandInfo *info, char *estr)
+void printError(CommandInfo *info, char *estr)
 {
-	_puts(info->fname);
-	_puts(": ");
-	printDecimal(info->line_count, STDERR_FILENO);
-	_puts(": ");
-	_puts(info->argv[0]);
-	_puts(": ");
-	_puts(estr);
+	ePuts(info->fname);
+	ePuts(": ");
+	printDec(info->line_count, STDERR_FILENO);
+	ePuts(": ");
+	ePuts(info->argv[0]);
+	ePuts(": ");
+	ePuts(estr);
 }
 
 /**
- * printDecimal - Prints a decimal (integer) number (base 10).
+ * printDec - Prints a decimal (integer) number (base 10).
  *
  * @input: The input number to be printed.
  *
@@ -62,65 +62,68 @@ void printErrorInfo(CommandInfo *info, char *estr)
  * Return: The number of characters printed.
  */
 
-int printDecimal(int input, int fd)
+int printDec(int input, int fd)
 {
-	int (*outputChar)(char) = (fd == STDERR_FILENO) ? _putchar : _putchar;
+	int (*__putchar)(char) = _putchar;
 	int i, count = 0;
-	unsigned int absoluteValue, current;
+	unsigned int absVal, current;
 
+	if (fd == STDERR_FILENO)
+		__putchar = ePutchar;
 	if (input < 0)
 	{
-		absoluteValue = -input;
-		outputChar('-');
+		absVal = -input;
+		__putchar('-');
 		count++;
 	}
 	else
-	{
-		absoluteValue = input;
-	}
-	current = absoluteValue;
-
+		absVal = input;
+	current = absVal;
 	for (i = 1000000000; i > 1; i /= 10)
 	{
-		if (absoluteValue / i)
+		if (absVal / i)
 		{
-			outputChar('0' + current / i);
+			__putchar('0' + current / i);
 			count++;
 		}
 		current %= i;
 	}
-	outputChar('0' + current);
+	__putchar('0' + current);
 	count++;
+
 	return (count);
 }
 
 /**
- * convertNumber - converts a number to a string
+ * convertNum - converts a number to a string
  * @num: the number to be converted
  * @base: the base for conversion
  * @flags: argument flags
  *
  * Return: the converted string
  */
-char *convertNumber(long int num, int base, int flags)
+char *convertNum(long int num, int base, int flags)
 {
+	static char *array;
 	static char buffer[50];
-	char *ptr = &buffer[49];
-	char *array =
-		(flags & CONVERT_LOWERCASE) ? "0123456789abcdef" : "0123456789ABCDEF";
 	char sign = 0;
+	char *ptr;
+	unsigned long n = num;
 
 	if (!(flags & CONVERT_UNSIGNED) && num < 0)
 	{
-		num = -num;
+		n = -num;
 		sign = '-';
+
 	}
+	array = flags & CONVERT_LOWERCASE ? "0123456789abcdef" : "0123456789ABCDEF";
+	ptr = &buffer[49];
 	*ptr = '\0';
 
-	do {
-		*--ptr = array[num % base];
-		num /= base;
-	} while (num != 0);
+	do	{
+		*--ptr = array[n % base];
+		n /= base;
+	} while (n != 0);
 
 	if (sign)
 		*--ptr = sign;

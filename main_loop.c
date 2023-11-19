@@ -17,7 +17,7 @@ int hsh(CommandInfo *info, char **av)
 		clearInfo(info);
 		if (isInteractive(info))
 			_puts("Custom_Shell$ ");
-		_putchar(FLUSH_BUFFER);
+		ePutchar(FLUSH_BUFFER);
 		size = getInput(info);
 		if (size != -1)
 		{
@@ -113,7 +113,7 @@ void findCmd(CommandInfo *info)
 		else if (*(info->arg) != '\n')
 		{
 			info->status = 127;
-			printErrorInfo(info, "not found\n");
+			printError(info, "not found\n");
 		}
 	}
 }
@@ -130,7 +130,7 @@ void forkCmd(CommandInfo *info)
 
 	if (child_pid == -1)
 	{
-		perror("Error forking process");
+		perror("Error forking process.\n");
 		exit(EXIT_FAILURE);
 	}
 	if (child_pid == 0)
@@ -140,49 +140,26 @@ void forkCmd(CommandInfo *info)
 			freeInfo(info, 1);
 			if (errno == EACCES)
 			{
-				fprintf(stderr, "Error: Permission denied.Unable to execute '%s'\n",
+				fprintf(stderr, "Error: Permission denied. Unable to execute '%s'\n",
 						info->path);
 				exit(126);
+				exit(1);
+			} else
+			{
+				fprintf(stderr, "Error: Unable to execute '%s': %s\n", info->path,
+						strerror(errno));
+				exit(EXIT_FAILURE);
 			}
-			exit(1);
 		}
 	}
 	else
 	{
-		int wait_status = wait(&(info->status));
-
-		if (wait_status == -1)
+		wait(&(info->status));
+		if (WIFEXITED(info->status))
 		{
-			perror("Error waiting for child process");
-			exit(EXIT_FAILURE);
+			info->status = WEXITSTATUS(info->status);
+			if (info->status == 126)
+				printError(info, "Permission denied\n");
 		}
-		handleWaitStatus(info, wait_status);
-	}
-}
-
-/**
- * handleWaitStatus - Handle the exit status of a child process
- * @info: Pointer to struct CommandInfo containing process information.
- * @wait_status: Status returned by the wait system call.
- */
-void handleWaitStatus(CommandInfo *info, int wait_status)
-{
-	if (WIFEXITED(wait_status))
-	{
-		info->status = WEXITSTATUS(wait_status);
-
-		if (info->status == 126)
-		{
-			printErrorInfo(info, "Permission denied");
-		}
-		else if (info->status == 127)
-		{
-			printErrorInfo(info, "Command not found");
-		}
-	}
-	else
-	{
-		fprintf(stderr, "Child process did not exit normally\n");
-		exit(EXIT_FAILURE);
 	}
 }
